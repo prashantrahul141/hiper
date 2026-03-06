@@ -13,7 +13,6 @@ print:
     jmp print
 
 halt:
-    hlt
     jmp halt
 
 msg:
