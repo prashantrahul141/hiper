@@ -91,11 +91,12 @@ void kvm_add_vcpu(kvm *vm, uint8_t vcpu_id, void *(*thread_fn)(void *)) {
 }
 
 void kvm_run(kvm *vm) {
+  /* create separate threads for each of the virtual cpus and then join them */
   for (size_t i = 0; i < vm->cpus.count; i++) {
-    vcpu_t *cpu = vec_at(vm->cpus, i);
-    if (0 != pthread_create(&cpu->thread, (const pthread_attr_t *)NULL,
-                            cpu->vcpu_thread_func, vm)) {
-      perror("Failed to create kvm thread");
+    vcpu_t *vcpu = vec_at(vm->cpus, i);
+    if (0 != pthread_create(&vcpu->thread, (const pthread_attr_t *)NULL,
+                            vcpu->vcpu_thread_func, vcpu)) {
+      perror("Failed to create vcpu thread");
       exit(1);
     }
   }
