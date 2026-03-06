@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
+#include <time.h>
 #include <unistd.h>
 
 void vcpu_clean(vcpu_t *vcpu) {
@@ -96,7 +97,8 @@ void *vcpu_thread_fn(void *buf) {
       INFO(
           "outport: %d, data: %d", vcpu->kvm_run->io.port,
           *(int *)((uint8_t *)(vcpu->kvm_run) + vcpu->kvm_run->io.data_offset));
-      sleep(1);
+      const struct timespec ts = {.tv_sec = 0, .tv_nsec = 100000000};
+      nanosleep(&ts, NULL);
       break;
     }
     case KVM_EXIT_MMIO:
@@ -106,10 +108,10 @@ void *vcpu_thread_fn(void *buf) {
       DEBUG("KVM_EXIT_INTR");
       return 0;
     case KVM_EXIT_SHUTDOWN:
-      printf("KVM_EXIT_SHUTDOWN");
+      INFO("received KVM_EXIT_SHUTDOWN");
       return 0;
     default:
-      printf("KVM PANIC\n");
+      FATAL("kvm paniced: %s", strerror(errno));
       return 0;
     }
   }
