@@ -1,6 +1,7 @@
 #ifndef _KVM_H_
 #define _KVM_H_
 
+#include "opt.h"
 #include "vcpu.h"
 
 #include <linux/kvm.h>
@@ -8,9 +9,9 @@
 #include <stdint.h>
 
 #define KVM_DEVICE "/dev/kvm"
-#define RAM_SIZE (512 * 1024 * 1024) /* 512MB */
+#define DEFAULT_RAM_SIZE (512 * 1024 * 1024) /* 512MB */
 #define VCPU_START_IP_LOC                                                      \
-  0x00 /* vcpu start location, see linker script for guest */
+  (0x00) /* vcpu start location, see linker script for guest */
 
 /* vm */
 typedef struct {
@@ -23,7 +24,7 @@ typedef struct {
   vcpus_t cpus;
 } kvm;
 
-void kvm_init(kvm *vm);
+void kvm_init(kvm *vm, const options_t *options);
 void kvm_add_vcpu(kvm *vm, uint8_t vcpu_id, void *(*thread_fn)(void *));
 void kvm_run(kvm *vm);
 void kvm_destroy(kvm *vm);

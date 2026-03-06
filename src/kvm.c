@@ -1,5 +1,6 @@
 #include "kvm.h"
 #include "nhlog.h"
+#include "opt.h"
 #include "vcpu.h"
 #include "vec.h"
 
@@ -31,11 +32,11 @@ void kvm_init(kvm *vm) {
     exit(-1);
   }
 
-  vm->ram_size = RAM_SIZE;
-  INFO("RAM_SIZE = %d", RAM_SIZE);
+  vm->ram_size = options->ram_size;
+  INFO("RAM_SIZE = %d", options->ram_size);
 
   vm->ram_start =
-      (intptr_t)mmap(NULL, RAM_SIZE, PROT_READ | PROT_WRITE,
+      (intptr_t)mmap(NULL, DEFAULT_RAM_SIZE, PROT_READ | PROT_WRITE,
                      MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1, 0);
   if (MAP_FAILED == (void *)vm->ram_start) {
     FATAL("failed to mmap: %s", strerror(errno));

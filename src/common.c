@@ -11,9 +11,9 @@
 #include <string.h>
 #include <unistd.h>
 
-void load_binary_file(kvm *vm, const char *filepath) {
+void load_binary_file(kvm *vm, const uint8_t filepath[static 100]) {
   DEBUG("load_binary_file: %s", filepath);
-  int32_t fd = open(filepath, O_RDONLY);
+  int32_t fd = open((char *)filepath, O_RDONLY);
   if (fd < 0) {
     FATAL("Opening binary file: %s", strerror(errno));
     exit(-1);
