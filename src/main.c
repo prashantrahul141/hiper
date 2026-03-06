@@ -9,11 +9,13 @@
 #include <stdlib.h>
 
 int main(int argc, char *argv[]) {
-  nhlog_set_level(NHLOG_DEBUG);
+  nhlog_set_level(NHLOG_INFO);
 
   /* parse command line arguments */
-  options_t options = {
-      .vcpu_count = 1, .ram_size = DEFAULT_RAM_SIZE, .path = {0}};
+  options_t options = {.vcpu_count = 1,
+                       .ram_size = DEFAULT_RAM_SIZE,
+                       .exec_mode = EXEC_MODE_REAL,
+                       .path = {0}};
 
   if (!parse_args(&options, argc, argv)) {
     return EXIT_FAILURE;
