@@ -7,37 +7,34 @@
   };
 
   outputs =
-    {
-      nixpkgs,
-      flake-utils,
-      ...
-    }:
+    { nixpkgs, flake-utils, ... }:
     flake-utils.lib.eachDefaultSystem (
       system:
       let
-        overlays = [ ];
-        pkgs = import nixpkgs {
-          inherit system overlays;
-        };
+        pkgs = import nixpkgs { inherit system; };
       in
       {
-        devShells.default = pkgs.mkShell {
-          stdenv = pkgs.clangStdenv;
-          packages =
-            with pkgs;
-            [
-              bear # generate compile_commands.json
-              gnumake
-            ]
-            ++ (if system == "aarch64-darwin" then [ ] else [ gdb ]);
+        devShells.default =
+          pkgs.mkShell.override
+            {
+              stdenv = pkgs.clangStdenv;
+            }
+            {
+              packages =
+                with pkgs;
+                [
+                  clang
+                  bear
+                  gnumake
+                ]
+                ++ (if system == "aarch64-darwin" then [ ] else [ gdb ]);
 
-          shellHook = ''
-            export LD_LIBRARY_PATH="${
-              pkgs.lib.makeLibraryPath [
-              ]
-            }:$LD_LIBRARY_PATH"
-          '';
-        };
+              shellHook = ''
+                export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [ ]}:$LD_LIBRARY_PATH"
+              '';
+            };
+
+        packages.default = 1;
       }
     );
 }
