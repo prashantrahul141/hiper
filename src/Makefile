@@ -8,13 +8,13 @@ MODE ?= debug
 
 ifeq ($(MODE),debug)
 
-CFLAGS := -std=c17 -Wall -Wextra -O0 -g3 \
+CFLAGS := -std=gnu23 -Wall -Wextra -O0 -g3 \
           $(SAN_FLAGS)
 LDFLAGS := $(SAN_FLAGS)
 
 else ifeq ($(MODE),release)
 
-CFLAGS := -std=c17 -Wall -Wextra -O2 \
+CFLAGS := -std=gnu23 -Wall -Wextra -O2 \
       $(HARDEN_FLAGS)
 LDFLAGS := -pie
 
