@@ -24,7 +24,7 @@ typedef vec_t(vcpu_t *) vcpus_t;
 
 void vcpu_clean(vcpu_t *vcpu);
 
-void vcpu_reset(vcpus_t vcpus);
+void vcpu_reset(vcpu_t *vcpu);
 
 void *vcpu_thread_fn(void *buf);
 
