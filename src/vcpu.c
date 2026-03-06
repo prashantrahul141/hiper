@@ -11,7 +11,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
-void vcpu_clean(vcpu *vcpu) {
+void vcpu_clean(vcpu_t *vcpu) {
   DEBUG("kvm_clean_vcpu");
   munmap(vcpu->kvm_run, vcpu->kvm_run_mmap_size);
   close(vcpu->fd);
@@ -20,7 +20,7 @@ void vcpu_clean(vcpu *vcpu) {
 void vcpu_reset(vcpus_t vcpus) {
   DEBUG("kvm_reset_cpus");
   for (size_t i = 0; i < vcpus.count; i++) {
-    vcpu *vcpu = vec_at(vcpus, i);
+    vcpu_t *vcpu = vec_at(vcpus, i);
     if (ioctl(vcpu->fd, KVM_GET_SREGS, &vcpu->sregs) < 0) {
       FATAL("failed to get sregs for vcpu = %d: %s", vcpu->id, strerror(errno));
 
@@ -68,17 +68,19 @@ void vcpu_reset(vcpus_t vcpus) {
 }
 
 void *vcpu_thread_fn(void *buf) {
-  DEBUG("kvm_cpu_thread");
+  TRACE("kvm_cpu_thread");
+
   /* trust */
   kvm *vm = (kvm *)buf;
-  int32_t ret = 0;
   vcpu_reset(vm->cpus);
+
+  int32_t ret = 0;
   while (true) {
-    INFO("kvm run");
+    TRACE("kvm run");
 
     /* run each cpu */
     for (size_t i = 0; i < vm->cpus.count; i++) {
-      vcpu *cpu = vec_at(vm->cpus, i);
+      vcpu_t *cpu = vec_at(vm->cpus, i);
       ret = ioctl(cpu->fd, KVM_RUN, 0);
 
       if (ret < 0) {
@@ -117,7 +119,7 @@ void *vcpu_thread_fn(void *buf) {
         return 0;
       }
     }
-  }
 
-  return NULL;
+    return NULL;
+  }
 }

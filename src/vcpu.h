@@ -18,11 +18,11 @@ typedef struct {
   struct kvm_regs regs;
   struct kvm_sregs sregs;
   void *(*vcpu_thread_func)(void *);
-} vcpu;
+} vcpu_t;
 
-typedef vec_t(vcpu *) vcpus_t;
+typedef vec_t(vcpu_t *) vcpus_t;
 
-void vcpu_clean(vcpu *vcpu);
+void vcpu_clean(vcpu_t *vcpu);
 
 void vcpu_reset(vcpus_t vcpus);
 

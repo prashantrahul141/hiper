@@ -13,7 +13,7 @@
 #include <sys/mman.h>
 #include <unistd.h>
 
-void kvm_init(kvm *vm) {
+void kvm_init(kvm *vm, const options_t *options) {
   DEBUG("vm_init");
   memset(vm, 0, sizeof(kvm));
 
@@ -57,7 +57,7 @@ void kvm_init(kvm *vm) {
 
 void kvm_add_vcpu(kvm *vm, uint8_t vcpu_id, void *(*thread_fn)(void *)) {
   DEBUG("kvm_vcpu_init");
-  vcpu *vcp = (vcpu *)malloc(sizeof(vcpu));
+  vcpu_t *vcp = (vcpu_t *)malloc(sizeof(vcpu_t));
   if (NULL == vcp) {
     FATAL("Failed allocating memory for vcpu: %s", strerror(errno));
     exit(ENOMEM);
@@ -86,13 +86,13 @@ void kvm_add_vcpu(kvm *vm, uint8_t vcpu_id, void *(*thread_fn)(void *)) {
   }
 
   vcp->vcpu_thread_func = thread_fn;
-  vec_push(vcpu *, vm->cpus, vcp);
+  vec_push(vcpu_t *, vm->cpus, vcp);
   return;
 }
 
 void kvm_run(kvm *vm) {
   for (size_t i = 0; i < vm->cpus.count; i++) {
-    vcpu *cpu = vec_at(vm->cpus, i);
+    vcpu_t *cpu = vec_at(vm->cpus, i);
     if (0 != pthread_create(&cpu->thread, (const pthread_attr_t *)NULL,
                             cpu->vcpu_thread_func, vm)) {
       perror("Failed to create kvm thread");
@@ -101,7 +101,7 @@ void kvm_run(kvm *vm) {
   }
 
   for (size_t i = 0; i < vm->cpus.count; i++) {
-    vcpu *cpu = vec_at(vm->cpus, i);
+    vcpu_t *cpu = vec_at(vm->cpus, i);
     pthread_join(cpu->thread, NULL);
   }
 }
