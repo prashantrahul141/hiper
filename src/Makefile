@@ -25,6 +25,7 @@ endif
 C_INCLUDES := -I$(SRC_DIR)
 
 C_SOURCES := $(SRC_DIR)/nhlog.c \
+			 $(SRC_DIR)/opt.c \
 			 $(SRC_DIR)/common.c  \
 			 $(SRC_DIR)/kvm.c  \
 			 $(SRC_DIR)/vcpu.c  \
