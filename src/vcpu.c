@@ -112,7 +112,7 @@ void *vcpu_thread_fn(void *buf) {
       printf("KVM PANIC\n");
       return 0;
     }
-
-    return NULL;
   }
+
+  return NULL;
 }
